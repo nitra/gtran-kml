@@ -25,12 +25,17 @@ exports.toGeoJson = async (fileName, options = {}) => {
     };
 
   const schemas = findSchemas(etree);
-  const placemarks = etree.findall(".//Placemark");
-  placemarks.forEach(function(placemark) {
-    geojson.features.push({
-      type: "feature",
-      geometry: getGeometry(placemark),
-      properties: getProperties(placemark, schemas)
+  const folders = etree.findall(".//Folder");
+
+  folders.forEach(function(folder) {
+    const folderName = folder.findtext("./name");
+    const placemarks = folder.findall(".//Placemark");
+    placemarks.forEach(function(placemark) {
+      geojson.features.push({
+        type: "feature",
+        geometry: getGeometry(placemark),
+        properties: getProperties(placemark, schemas, folderName)
+      });
     });
   });
 
@@ -41,12 +46,15 @@ exports.fromGeoJson = async (geojson, fileName, options = {}) => {
   geojson = JSON.parse(JSON.stringify(geojson));
 
   const symbols = {};
-  const featureStyleKey = options.featureStyleKey || 'gtran-kml-style-id';
+  const featureStyleKey = options.featureStyleKey || "gtran-kml-style-id";
 
   geojson.features.forEach(feature => {
     const symbol = {
       geomType: feature.geometry.type,
-      symbol: typeof options.symbol === "function" ? options.symbol(feature) : options.symbol
+      symbol:
+        typeof options.symbol === "function"
+          ? options.symbol(feature)
+          : options.symbol
     };
     const id = md5(JSON.stringify(symbol));
 
@@ -59,8 +67,9 @@ exports.fromGeoJson = async (geojson, fileName, options = {}) => {
 
   let kmlContent = tokml(geojson, {
     name: options.name || "name",
-    documentName: options.documentName || 'My KML',
-    documentDescription: options.documentDescription || "Converted from GeoJson by gtran-kml"
+    documentName: options.documentName || "My KML",
+    documentDescription:
+      options.documentDescription || "Converted from GeoJson by gtran-kml"
   });
 
   if (options.symbol) {
@@ -173,7 +182,14 @@ function findSchemas(rootnode) {
   }
 }
 
-function getProperties(placemark, schemas) {
+/**
+ * Make properties
+ *
+ * @param {Object} placemark
+ * @param {Object} schemas
+ * @param {String} folder  Parent folder name
+ */
+function getProperties(placemark, schemas, folder) {
   var properties = {};
 
   // name
@@ -209,6 +225,10 @@ function getProperties(placemark, schemas) {
     properties[field.attrib.name] = field.findtext("./value");
   });
 
+  // folder name
+  if (folder) {
+    properties.folder = folder;
+  }
   return properties;
 }
 

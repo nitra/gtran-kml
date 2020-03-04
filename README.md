@@ -1,15 +1,13 @@
 # gtran-kml
 
-[![npm](https://img.shields.io/npm/v/gtran-kml.svg)](https://www.npmjs.com/package/gtran-kml) [![Build Status](https://travis-ci.org/haoliangyu/gtran-kml.svg?branch=master)](https://travis-ci.org/haoliangyu/gtran-kml)
-
 Convert geojson to kml file and backwards.
 
-This is a sub-project of [gtran](https://github.com/haoliangyu/gtran).
+This is a fork of [gtran](https://github.com/haoliangyu/gtran-kml) with folder support.
 
 ## Installation
 
 ```javascript
-npm install gtran-kml
+npm install @nitra/gtran-kml
 ```
 
 ## Functions

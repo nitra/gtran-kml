@@ -128,7 +128,10 @@ function createGeometry(geomType, outerCoorStr, innerCoorStr) {
 }
 
 function getCoordinates(outCoorsdStr, inCoordsStrs) {
-  var pointStrs = outCoorsdStr.split(" ");
+  var pointStrs = outCoorsdStr
+    .replace(/\s\s+/g, " ")
+    .trim()
+    .split(" ");
 
   if (pointStrs.length == 1) {
     var coors = pointStrs[0].split(",");

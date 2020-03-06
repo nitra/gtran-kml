@@ -5,20 +5,10 @@ const et = require("elementtree");
 const md5 = require("./md5");
 const symbol = require("./symbol.js");
 
-const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 
-// just to provide backwards compatibility
-exports.setPromiseLib = () => {};
-
-exports.toGeoJson = async (fileName, options = {}) => {
-  if (!fs.statSync(fileName)) {
-    throw new Error("Give KML file does not exist.");
-  }
-
-  const encoding = options.encoding || "utf-8";
-  const data = await readFileAsync(fileName, encoding);
-  const etree = et.parse(data),
+exports.toGeoJson = async data => {
+  const etree = et.parse(data.toString()),
     geojson = {
       type: "FeatureCollection",
       features: []
@@ -34,7 +24,7 @@ exports.toGeoJson = async (fileName, options = {}) => {
       geojson.features.push({
         type: "feature",
         geometry: getGeometry(placemark),
-        properties: getProperties(placemark, schemas, folderName)
+        properties: getProperties(placemark, schemas, folderName.toString())
       });
     });
   });

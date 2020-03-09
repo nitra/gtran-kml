@@ -139,6 +139,7 @@ function getCoordinates(outCoorsdStr, inCoordsStrs) {
 
     var allPoints = [outPoints];
     inCoordsStrs.forEach(function(coordsStr) {
+      coordsStr = coordsStr.replace(/\s\s+/g, " ").trim();
       var inPoints = [],
         pointStrs = coordsStr.split(" ");
 
